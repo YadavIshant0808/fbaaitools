@@ -1,0 +1,9 @@
+{% extends "iBase.html" %}
+{% block title %}{{terms.title}} - {% endblock title %}
+{% block content %}
+<div class="container my-5">
+    <h2>{{ terms.title }}</h2>
+    <p><em>Last Updated: {{ terms.updated_at|date:"F d, Y" }}</em></p>
+    <div>{{ terms.content|safe }}</div>
+</div>
+{% endblock content %}

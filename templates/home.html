@@ -1,0 +1,57 @@
+{% extends "iBase.html" %}
+{% block title %}Home{% endblock title %}
+{% block content %}
+  <!-- Tools Home Page -->
+  <main class="container my-5">
+    <h1 class="text-center mb-4">Our Developer Tools</h1>
+    <div class="row">
+      <!-- Math Tutor -->
+      <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card h-100">
+          <img src="{% static 'assets/img/tool-math.jpg' %}" class="card-img-top" alt="Math Tutor">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">Math Tutor</h5>
+            <p class="card-text">Solve math problems step-by-step and generate custom worksheets to enhance your math skills.</p>
+            <a href="{% url 'mathtutor' %}" class="btn btn-primary mt-auto">Explore Math Tutor</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Researcher -->
+      <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card h-100">
+          <img src="{% static 'assets/img/tool-researcher.jpg' %}" class="card-img-top" alt="Researcher">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">Researcher</h5>
+            <p class="card-text">Analyze academic papers and tech articles effortlessly with our advanced research tool.</p>
+            <a href="{% url 'researcher' %}" class="btn btn-primary mt-auto">Explore Researcher</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Code Optimiser -->
+      <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card h-100">
+          <img src="{% static 'assets/img/tool-code.jpg' %}" class="card-img-top" alt="Code Optimiser">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">Code Optimiser</h5>
+            <p class="card-text">Boost your code performance with AI-powered optimizations and detailed improvement tips.</p>
+            <a href="{% url 'codeoptimiser' %}" class="btn btn-primary mt-auto">Explore Code Optimiser</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Study Planner -->
+      <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card h-100">
+          <img src="{% static 'assets/img/tool-study.jpg' %}" class="card-img-top" alt="Study Planner">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">Study Planner</h5>
+            <p class="card-text">Organize your study schedule effectively with our dynamic planner tailored to your exam dates.</p>
+            <a href="{% url 'studyplanner' %}" class="btn btn-primary mt-auto">Explore Study Planner</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  {% endblock content %}
