@@ -44,7 +44,7 @@ def optimize_code(code_snippet):
     """
     # Set up a system message for the code optimizer role.
     system_message = {
-        "role": "system",
+        "role": "user",
         "parts": [
             "You are a helpful code optimizer. Analyze the provided Python function, "
             "identify its time complexity, and optimize it. Provide a detailed explanation of "
@@ -80,7 +80,7 @@ def generate_unit_tests(code_snippet):
     """
     # Set up a system message for the unit testing role.
     system_message = {
-        "role": "system",
+        "role": "user",
         "parts": [
             "You are a helpful unit test generator. Your task is to create 10 distinct unit tests for "
             "the given Python function. Each test should include comments explaining its purpose. After listing "

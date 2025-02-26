@@ -37,12 +37,45 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+        # Allauth apps
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    # Social providers (if any, e.g., Google, Facebook, etc.)
+    'allauth.socialaccount.providers.google',
     'home',
+    'userprofile',
 ]
+
+SITE_ID = 1
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',  # Django’s default auth
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+# Allauth configuration
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_EMAIL_VERIFICATION = "none"  # Disable email verification for simplicity
+ACCOUNT_LOGOUT_ON_GET = True
+
+# Redirect URLs (adjust as needed)
+LOGIN_REDIRECT_URL = "/tools"
+LOGOUT_REDIRECT_URL = "/"
+
+# If you want to customize the allauth forms, point them to your custom classes:
+ACCOUNT_FORMS = {
+    'login': 'home.forms.CustomLoginForm',
+    'signup': 'home.forms.CustomSignupForm',
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'allauth.account.middleware.AccountMiddleware',  # <-- Add this line
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -112,7 +145,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
@@ -124,7 +156,8 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",  # Default static directory
   # Additional static directory
 ]
-
+MEDIA_URL = '/media/'
+MEDIA_Root = os.path.join(BASE_DIR, 'media')
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 

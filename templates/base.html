@@ -67,8 +67,20 @@
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
-
-      <a class="btn-getstarted" href="{% url "home" %}#about">Get Started</a>
+              <!-- Other nav items -->
+        {% if user.is_authenticated %}
+        <div class="profile-dropdown">
+          <img src="{% if user.profile.profile_picture %}{{ user.profile.profile_picture.url }}{% else %}{% static 'assets/img/default-profile.png' %}{% endif %}" alt="Profile" width="30%" height="30%" class=" rounded profile-icon">
+          <div class="dropdown-content">
+            <span class="user-fullname">{{ user.get_full_name|default:user.username }}</span>
+            <span class="user-username">@{{ user.username }}</span>
+            <a href="#" id="openProfileModal">Profile</a>
+            <a href="{% url 'account_logout' %}">Logout</a>
+          </div>
+        </div>
+      {% else %}
+      <a class="btn-getstarted" href="{% url 'account_login' %}">Login</a>
+      {% endif %}
 
     </div>
   </header>
@@ -81,7 +93,7 @@
   <footer id="footer" class="footer">
     <div class="container footer-top">
     <div class="container copyright text-center mt-4">
-      <p>© <span>Copyright</span><span>{% now "Y" %}</span> <strong class="px-1 sitename">FBA Dev Tools</strong> <span>All Rights Reserved</span></p>
+      <p>© <span>Copyright</span><span> {% now "Y" %}</span> <strong class="px-1 sitename">FBA Dev Tools</strong> <span>All Rights Reserved</span></p>
       <div class="credits">
         <!-- All the links in the footer should remain intact. -->
         <!-- Licensing information: https://about-ishant.web.app/ -->
@@ -103,6 +115,27 @@
 
   <!-- Main JS File -->
   <script src="{% static "assets/js/main.js" %} "></script>
+  <!--Profile dropdown -->
+    <!-- Modal Dialog for Profile (hidden by default) -->
+    <div id="profileModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        {% include 'profile/profile_modal.html' %}
+      </div>
+    </div>
+  <script>
+    // Example JavaScript to toggle modal visibility
+    $(document).ready(function(){
+      $("#openProfileModal").click(function(e){
+        e.preventDefault();
+        $("#profileModal").show();
+      });
+      $(".close").click(function(){
+        $("#profileModal").hide();
+      });
+      // Optionally, add tab switching logic here for the sidebar inside the modal
+    });
+  </script>
 
 </body>
 

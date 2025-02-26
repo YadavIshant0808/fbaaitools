@@ -1,3 +1,7 @@
 django
 python-dotenv
 google-genai
+google-generativeai
+django-allauth
+pillow
+"django-allauth[socialaccount]"

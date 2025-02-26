@@ -53,39 +53,41 @@ def generate_study_plan(subjects_dates, extra_details=""):
     )
     
     # Set up the system message to instruct the model about its role
-    system_message = {
-        "role": "system",
+    # Define the user message to set the study planner context
+    context_message = {
+        "role": "user",
         "parts": [
             "You are an AI-powered study planner. Your task is to create a detailed, structured study schedule for a student "
             "based on their subjects and exam dates."
         ]
     }
-    
+
     # Create the user message with the formatted prompt
     user_message = {
         "role": "user",
         "parts": [prompt]
     }
-    
+
     # Start a chat session with the study planner context and send the prompt
-    chat_session = model.start_chat(history=[system_message, user_message])
+    chat_session = model.start_chat(history=[context_message, user_message])
+
     response = chat_session.send_message("Generate the study plan based on the given exam dates and subjects.")
     return response.text
 
 # Example usage of the study planner function
-if __name__ == "__main__":
-    # Define the subjects and exam dates
-    subjects_dates = {
-        "Mathematics": "2025-03-01",
-        "Physics": "2025-03-05",
-        "Chemistry": "2025-03-03",
-        "Biology": "2025-03-07",
-    }
+# if __name__ == "__main__":
+#     # Define the subjects and exam dates
+#     subjects_dates = {
+#         "Mathematics": "2025-03-01",
+#         "Physics": "2025-03-05",
+#         "Chemistry": "2025-03-03",
+#         "Biology": "2025-03-07",
+#     }
     
-    # Optional extra instructions: preferred study times, days off, etc.
-    extra_details = "I prefer studying in the evenings and need at least one full day off per week for relaxation."
+#     # Optional extra instructions: preferred study times, days off, etc.
+#     extra_details = "I prefer studying in the evenings and need at least one full day off per week for relaxation."
     
-    # Generate and print the study plan
-    study_plan = generate_study_plan(subjects_dates, extra_details)
-    print("Generated Study Plan:")
-    print(study_plan)
+#     # Generate and print the study plan
+#     study_plan = generate_study_plan(subjects_dates, extra_details)
+#     print("Generated Study Plan:")
+#     print(study_plan)

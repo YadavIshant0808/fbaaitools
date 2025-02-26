@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import ContactMessage, Policy
+from aitool import optimise #import the function from ai_tools
 #import files from ai tools take help of gpt 
 
 def landing_index(request):
@@ -30,7 +31,7 @@ def home(request):
 
 def terms_of_service(request):
     terms = get_object_or_404(Policy, policy_type='tos')
-    return render(request, 'policies/terms', {'terms': terms})
+    return render(request, 'policies/terms.html', {'terms': terms})
 
 def privacy_policy(request):
     privacy = get_object_or_404(Policy, policy_type='privacy')
@@ -53,7 +54,7 @@ def tutor(request):
 def codeoptimiser(request):
     if request.method == 'POST': #same to other functions 
         code_snippet = request.POST.get('code_snippet')#same to other functions but variable should different
-        optimized_code = optimize_code(code_snippet) # pass the variable to the function and function should be imported from ai tools
+        optimized_code = optimise(code_snippet) # pass the variable to the function and function should be imported from ai tools
         return render(request, 'tools/codeoptimiser.html', {'optimized_code': optimized_code}) # render the template with the optimized code passing through context in dictionary
     return render(request, 'tools/codeoptimiser.html')#Ahem complete this function to render the researcher.html template take help of chat gpt  
 
