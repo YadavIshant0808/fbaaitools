@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% load custom_filters %}
+{% block title %}Study Planner{% endblock title %}
+{% block content %}
+<!-- New Study Session Floating Button at Top Right -->
+<button type="button" class="btn btn-success rounded-circle" style="position: fixed; top: 20px; right: 20px; width: 60px; height: 60px;" data-bs-toggle="modal" data-bs-target="#newStudySessionModal">
+  <i class="bi bi-plus-lg" style="font-size: 1.5rem;"></i>
+</button>
+
+<div class="container mt-5">
+  <h1 class="text-center mb-4">Study Planner</h1>
+  
+  <!-- Display current session info if available -->
+  {% if current_session %}
+  <div class="alert alert-info text-center">
+    Study Session: <strong>{{ current_session.name }}</strong> (ID: {{ current_session.id }})
+  </div>
+  {% endif %}
+  
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <!-- Study Planner Form -->
+      <form method="POST" action="{% url 'studyplanner' %}">
+        {% csrf_token %}
+        <div id="subjects">
+          <div class="subject-entry mb-3">
+            <div class="form-group">
+              <label>Subject:</label>
+              <input type="text" name="subject[]" class="form-control" placeholder="Subject Name" required>
+            </div>
+            <div class="form-group">
+              <label>Exam Date:</label>
+              <input type="date" name="exam_date[]" class="form-control" required>
+            </div>
+          </div>
+        </div>
+        <button type="button" id="addSubject" class="btn btn-secondary mb-3">Add Another Subject</button>
+        <div class="form-group mb-3">
+          <label for="extraDetails">Extra Details (optional):</label>
+          <textarea name="extra_details" id="extraDetails" rows="3" class="form-control" placeholder="e.g. preferred study hours, days off"></textarea>
+        </div>
+        <!-- Chat-style input group with send icon -->
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" placeholder="Type your message..." aria-label="Message" readonly>
+          <button class="btn btn-primary" type="submit">
+            <i class="bi bi-send-fill"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+<!-- Chat Display Area -->
+<div class="row mt-5">
+  <div class="col-md-8 offset-md-2">
+    <!-- Loading message: hidden by default -->
+    <div id="loadingMessage" class="text-center text-muted mb-3" style="display: none;">
+      <i class="bi bi-hourglass-split"></i> Study Planner is processing your input...
+    </div>
+    {% if conversation_messages %}
+      {% for message in conversation_messages %}
+        <div class="card mb-3 {% if message.sender == 'user' %}border-primary{% else %}border-success{% endif %}">
+          <div class="card-body">
+            <h6 class="card-subtitle mb-2 text-muted">
+              {% if message.sender == 'user' %}You{% else %}Study Planner Output{% endif %}
+            </h6>
+            {% if message.sender == 'system' and message.text|contains_table %}
+              <div class="table-responsive bg-light p-3 mb-3" style="overflow-x: auto; border: 1px solid #ddd;">
+                {{ message.text|safe }}
+              </div>
+            {% else %}
+              <div class="bg-light p-3" style="overflow-x: auto; border: 1px solid #ddd;">
+                <pre class="mb-0">{{ message.text }}</pre>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p class="text-center text-muted">No conversation yet. Start by submitting your study plan details.</p>
+    {% endif %}
+      
+      {% if study_plan and not conversation_messages %}
+      <div class="card mb-3 border-success">
+        <div class="card-body">
+          <h6 class="card-subtitle mb-2 text-muted">Study Planner Output</h6>
+          <div class="table-responsive bg-light p-3 mb-3" style="overflow-x: auto; border: 1px solid #ddd;">
+            {{ study_plan|safe }}
+          </div>
+          <div class="normal-output">
+            <p class="mb-0">{{ study_plan|linebreaks }}</p>
+          </div>
+          {% if current_session %}
+          <a href="{% url 'download_study_plan' current_session.id %}" class="btn btn-outline-primary">Download as PDF</a>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+<script>
+  // When the study planner form is submitted, display the loading message.
+  document.querySelector("form").addEventListener("submit", function(e) {
+    document.getElementById("loadingMessage").style.display = "block";
+  });
+  </script>
+  
+<!-- Floating History Button at Bottom Right -->
+<button type="button" class="btn btn-secondary rounded-circle" style="position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;" data-bs-toggle="modal" data-bs-target="#studyHistoryModal">
+  <i class="bi bi-clock-history" style="font-size: 1.5rem;"></i>
+</button>
+
+<!-- New Study Session Modal -->
+<div class="modal fade" id="newStudySessionModal" tabindex="-1" aria-labelledby="newStudySessionModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="{% url 'create_study_session' %}">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="newStudySessionModalLabel">Start New Study Session</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="studySessionName" class="form-label">Session Name</label>
+            <input type="text" class="form-control" id="studySessionName" name="session_name" placeholder="Enter session name" required>
+          </div>
+          <p class="text-muted small">A new study session will be created and all your study plan conversations will be saved under this session.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Session</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Study History Modal -->
+<div class="modal fade" id="studyHistoryModal" tabindex="-1" aria-labelledby="studyHistoryModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="studyHistoryModalLabel">Study Planner History</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="list-group">
+          {% for session in study_history %}
+          <li class="list-group-item">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <strong>{{ session.name }}</strong>
+                <br>
+                <small class="text-muted">Last activity: {{ session.last_activity }}</small>
+              </div>
+              <a href="{% url 'load_study_session' session.id %}" class="btn btn-sm btn-outline-primary">Load</a>
+            </div>
+          </li>
+          {% empty %}
+          <li class="list-group-item">No session history available.</li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('addSubject').addEventListener('click', function() {
+    var subjectsDiv = document.getElementById('subjects');
+    var newEntry = document.createElement('div');
+    newEntry.classList.add('subject-entry', 'mb-3');
+    newEntry.innerHTML = `
+        <div class="form-group">
+            <label>Subject:</label>
+            <input type="text" name="subject[]" class="form-control" placeholder="Subject Name" required>
+        </div>
+        <div class="form-group">
+            <label>Exam Date:</label>
+            <input type="date" name="exam_date[]" class="form-control" required>
+        </div>
+        <hr>
+    `;
+    subjectsDiv.appendChild(newEntry);
+});
+</script>
+{% endblock content %}

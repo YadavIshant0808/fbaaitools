@@ -41,4 +41,3 @@ def fba_researcher(inp_message):
     response = chat_session.send_message(inp_message)
 
     return(response.text)
-print(fba_researcher("sumerise the article"))

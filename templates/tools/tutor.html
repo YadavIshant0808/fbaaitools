@@ -1,5 +1,152 @@
 {% extends "base.html" %}
-{% block title %}Math Tutor - {% endblock title %}
+{% block title %}Math Tutor{% endblock title %}
 {% block content %}
-<h1>Math Tutor</h1>
+<div class="container mt-5">
+  <h1 class="text-center mb-4">Math Tutor</h1>
+  <!-- Nav tabs for Solve and Worksheet -->
+  <ul class="nav nav-tabs" id="tutorTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link {% if active_tab == 'solve' or not active_tab %}active{% endif %}" id="solve-tab" data-bs-toggle="tab" data-bs-target="#solve" type="button" role="tab" aria-controls="solve" aria-selected="true">Solve</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link {% if active_tab == 'worksheet' %}active{% endif %}" id="worksheet-tab" data-bs-toggle="tab" data-bs-target="#worksheet" type="button" role="tab" aria-controls="worksheet" aria-selected="false">Worksheet</button>
+    </li>
+  </ul>
+  <div class="tab-content" id="tutorTabContent">
+    <!-- Solve Tab -->
+    <div class="tab-pane fade {% if active_tab == 'solve' or not active_tab %}show active{% endif %}" id="solve" role="tabpanel" aria-labelledby="solve-tab">
+      <div class="mt-4">
+        <form id="solveForm" method="POST" action="{% url 'tutor' %}">
+          {% csrf_token %}
+          <input type="hidden" name="mode" value="solve">
+          <div class="form-group">
+            <label for="question">Enter your math question or problem:</label>
+            <textarea name="question" id="question" rows="5" class="form-control" placeholder="e.g. Solve x² - 5x + 6 = 0"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary mt-3">Ask Tutor</button>
+        </form>
+        <!-- Loading indicator for Solve (hidden by default) -->
+        <div id="loadingSolve" class="text-center text-muted mt-3" style="display: none;">
+          <i class="bi bi-hourglass-split"></i> Tutor is thinking...
+        </div>
+        {% if tutor_response %}
+          <h2 class="mt-4">Tutor Response:</h2>
+          <div class="tutor-response-output bg-light p-3" style="overflow-x:auto; border:1px solid #ddd;">
+            <pre>{{ tutor_response }}</pre>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+    <!-- Worksheet Tab -->
+    <div class="tab-pane fade {% if active_tab == 'worksheet' %}show active{% endif %}" id="worksheet" role="tabpanel" aria-labelledby="worksheet-tab">
+      <div class="mt-4">
+        <form id="worksheetForm" method="POST" action="{% url 'tutor' %}">
+          {% csrf_token %}
+          <input type="hidden" name="mode" value="worksheet">
+          <div class="form-group mb-3">
+            <label for="topic">Enter the math topic for the worksheet:</label>
+            <input type="text" name="topic" id="topic" class="form-control" placeholder="e.g. quadratic equations" required>
+          </div>
+          <div class="form-group mb-3">
+            <label for="num_questions">Number of Questions:</label>
+            <input type="number" name="num_questions" id="num_questions" class="form-control" value="5" required>
+          </div>
+          <button type="submit" class="btn btn-primary mt-3">Generate Worksheet</button>
+        </form>
+        <!-- Loading indicator for Worksheet (hidden by default) -->
+        <div id="loadingWorksheet" class="text-center text-muted mt-3" style="display: none;">
+          <i class="bi bi-hourglass-split"></i> Worksheet is processing your input...
+        </div>
+        {% if worksheet_output %}
+          <h2 class="mt-4">Generated Worksheet:</h2>
+          <div class="worksheet-output bg-light p-3 mb-3" style="overflow-x:auto; border:1px solid #ddd;">
+            {{ worksheet_output|safe }}
+          </div>
+          <div class="normal-output mt-3">
+            <p>{{ worksheet_output|linebreaks }}</p>
+          </div>
+          {% if current_worksheet_session %}
+            <a href="{% url 'download_worksheet' current_worksheet_session.id %}" class="btn btn-outline-primary mt-3">Download Worksheet as PDF</a>
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Floating History Button for Worksheet at Bottom Right -->
+<button type="button" class="btn btn-secondary rounded-circle" style="position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;" data-bs-toggle="modal" data-bs-target="#worksheetHistoryModal">
+  <i class="bi bi-clock-history" style="font-size: 1.5rem;"></i>
+</button>
+<!-- New Worksheet Session Modal (Floating Button at Top Right, offset from Solve toggle) -->
+<button type="button" class="btn btn-success rounded-circle" style="position: fixed; top: 20px; right: 100px; width: 60px; height: 60px;" data-bs-toggle="modal" data-bs-target="#newWorksheetSessionModal">
+  <i class="bi bi-plus-lg" style="font-size: 1.5rem;"></i>
+</button>
+<!-- New Worksheet Session Modal -->
+<div class="modal fade" id="newWorksheetSessionModal" tabindex="-1" aria-labelledby="newWorksheetSessionModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="{% url 'create_worksheet_session' %}">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="newWorksheetSessionModalLabel">Start New Worksheet Session</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="worksheetSessionName" class="form-label">Session Name</label>
+            <input type="text" class="form-control" id="worksheetSessionName" name="session_name" placeholder="Enter session name" required>
+          </div>
+          <p class="text-muted small">A new worksheet session will be created and all your worksheet generation conversations will be saved under this session.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Session</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- Worksheet History Modal -->
+<div class="modal fade" id="worksheetHistoryModal" tabindex="-1" aria-labelledby="worksheetHistoryModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="worksheetHistoryModalLabel">Worksheet Session History</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="list-group">
+          {% for session in worksheet_history %}
+          <li class="list-group-item">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <strong>{{ session.name }}</strong><br>
+                <small class="text-muted">Last activity: {{ session.last_activity }}</small>
+              </div>
+              <a href="{% url 'load_worksheet_session' session.id %}" class="btn btn-sm btn-outline-primary">Load</a>
+            </div>
+          </li>
+          {% empty %}
+          <li class="list-group-item">No worksheet session history available.</li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// When the Solve form is submitted, display the Solve loading message.
+document.getElementById("solveForm").addEventListener("submit", function(e) {
+  document.getElementById("loadingSolve").style.display = "block";
+});
+
+// When the Worksheet form is submitted, display the Worksheet loading message.
+document.getElementById("worksheetForm").addEventListener("submit", function(e) {
+  document.getElementById("loadingWorksheet").style.display = "block";
+});
+</script>
 {% endblock content %}

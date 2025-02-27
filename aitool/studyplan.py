@@ -18,14 +18,16 @@ generation_config = {
     "top_p": 0.95,
     "top_k": 64,
     "max_output_tokens": 8192,
-    "response_mime_type": "application/json",
+    "response_mime_type": "text/plain",  # change this from "application/json"
 }
+
 
 # Create the model instance for the study planner
 model = genai.GenerativeModel(
-    model_name="gemini-2.0-flash-lite-preview-02-05",
+    model_name="gemini-2.0-flash-thinking-exp-01-21",
     generation_config=generation_config,
 )
+
 
 def generate_study_plan(subjects_dates, extra_details=""):
     """

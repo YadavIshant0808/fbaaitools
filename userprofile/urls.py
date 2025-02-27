@@ -10,4 +10,5 @@ urlpatterns = [
     path('profile/update/', views.update_account_settings, name='update_account_settings'),
     path('profile/password-change/', views.change_password, name='change_password'),
     path('profile/delete/', views.delete_account, name='delete_account'),
-]
+    path("google_login_by_token/", views.GoogleLoginByToken.as_view(), name="google_login_by_token"),
+] 

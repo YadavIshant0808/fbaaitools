@@ -43,8 +43,9 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     # Social providers (if any, e.g., Google, Facebook, etc.)
     'allauth.socialaccount.providers.google',
-    'home',
+    'rest_framework.authtoken',
     'userprofile',
+    'home',
 ]
 
 SITE_ID = 1
@@ -61,16 +62,34 @@ ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = "none"  # Disable email verification for simplicity
 ACCOUNT_LOGOUT_ON_GET = True
 
+#socail auth
+ACCOUNT_ADAPTER = "allauth.account.adapter.DefaultAccountAdapter"
+SOCIALACCOUNT_ADAPTER = "allauth.socialaccount.adapter.DefaultSocialAccountAdapter"
+
+# Directly redirect to Google, skipping Django’s intermediate page
+SOCIALACCOUNT_LOGIN_ON_GET = True
+
+
 # Redirect URLs (adjust as needed)
 LOGIN_REDIRECT_URL = "/tools"
 LOGOUT_REDIRECT_URL = "/"
 
 # If you want to customize the allauth forms, point them to your custom classes:
 ACCOUNT_FORMS = {
-    'login': 'home.forms.CustomLoginForm',
-    'signup': 'home.forms.CustomSignupForm',
+    'login': 'userprofile.forms.CustomLoginForm',
+    'signup': 'userprofile.forms.CustomSignupForm',
 }
 
+# SOCIALACCOUNT_PROVIDERS = {
+#     'google': {
+#         'APP': {
+#             'client_id': '524299101054-n5uus6vtc99n45ii524kb9u3j2dpf122.apps.googleusercontent.com',
+#             'secret': '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',
+#         },
+#         'SCOPE': ['profile', 'email'],
+#         'AUTH_PARAMS': {'access_type': 'online'},
+#     }
+# }
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

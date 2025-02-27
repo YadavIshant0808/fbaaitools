@@ -1,5 +1,144 @@
 {% extends "base.html" %}
-{% block title %}Researcher - {% endblock title %}
+{% block title %}Researcher{% endblock title %}
 {% block content %}
-<h1>Researcher</h1>
+<!-- New Research Session Floating Button at Top Right -->
+<button type="button" class="btn btn-success rounded-circle" style="position: fixed; top: 20px; right: 20px; width: 60px; height: 60px;" data-bs-toggle="modal" data-bs-target="#newResearchSessionModal">
+  <i class="bi bi-plus-lg" style="font-size: 1.5rem;"></i>
+</button>
+
+<div class="container mt-5">
+  <h1 class="text-center mb-4">Researcher</h1>
+  
+  <!-- Display current session info if available -->
+  {% if current_session %}
+  <div class="alert alert-info text-center">
+    Research Session: <strong>{{ current_session.name }}</strong> (ID: {{ current_session.id }})
+  </div>
+  {% endif %}
+  
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <!-- Research Query Form -->
+      <form method="POST" action="{% url 'researcher' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group mb-3">
+          <label for="query" class="form-label">Enter your research query or attach a research paper:</label>
+          <textarea name="query" id="query" rows="5" class="form-control" placeholder="Enter your query here..."></textarea>
+        </div>
+        <div class="form-group mb-3">
+          <label for="researchFile" class="form-label">Attach Research File (PDF or DOC):</label>
+          <input type="file" name="research_file" id="researchFile" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">
+          <i class="bi bi-send-fill"></i> Get Research Response
+        </button>
+      </form>
+    </div>
+  </div>
+  
+<!-- Chat Display Area -->
+<div class="row mt-5">
+    <div class="col-md-8 offset-md-2">
+      <!-- Loading message: hidden by default -->
+      <div id="loadingMessage" class="text-center text-muted mb-3" style="display: none;">
+        <i class="bi bi-hourglass-split"></i> Researcher is thinking to respond...
+      </div>
+      {% if conversation_messages %}
+        {% for message in conversation_messages %}
+          <div class="card mb-3 {% if message.sender == 'user' %}border-primary{% else %}border-success{% endif %}">
+            <div class="card-body">
+              <h6 class="card-subtitle mb-2 text-muted">
+                {% if message.sender == 'user' %}You{% else %}Research Response{% endif %}
+              </h6>
+              <div class="bg-light p-3" style="overflow-x: auto; border: 1px solid #ddd;">
+                <pre class="mb-0">{{ message.text }}</pre>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="text-center text-muted">No conversation yet. Start by submitting your research query or attaching a file.</p>
+      {% endif %}
+      {% if research_response and not conversation_messages %}
+        <div class="card mb-3 border-success">
+          <div class="card-body">
+            <h6 class="card-subtitle mb-2 text-muted">Research Response</h6>
+            <div class="bg-light p-3 mb-3" style="overflow-x: auto; border: 1px solid #ddd;">
+              <pre class="mb-0">{{ research_response }}</pre>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+  
+  <script>
+  // When the form is submitted, display the loading message.
+  document.querySelector("form").addEventListener("submit", function(e) {
+    document.getElementById("loadingMessage").style.display = "block";
+  });
+  </script>
+  
+<!-- Floating History Button for Research at Bottom Right -->
+<button type="button" class="btn btn-secondary rounded-circle" style="position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;" data-bs-toggle="modal" data-bs-target="#researchHistoryModal">
+  <i class="bi bi-clock-history" style="font-size: 1.5rem;"></i>
+</button>
+
+<!-- New Research Session Modal -->
+<div class="modal fade" id="newResearchSessionModal" tabindex="-1" aria-labelledby="newResearchSessionModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="{% url 'create_research_session' %}">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="newResearchSessionModalLabel">Start New Research Session</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="researchSessionName" class="form-label">Session Name</label>
+            <input type="text" class="form-control" id="researchSessionName" name="session_name" placeholder="Enter session name" required>
+          </div>
+          <p class="text-muted small">A new research session will be created and all your research conversations will be saved under this session.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Session</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Research History Modal -->
+<div class="modal fade" id="researchHistoryModal" tabindex="-1" aria-labelledby="researchHistoryModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="researchHistoryModalLabel">Research Session History</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="list-group">
+          {% for session in research_history %}
+          <li class="list-group-item">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <strong>{{ session.name }}</strong><br>
+                <small class="text-muted">Last activity: {{ session.last_activity }}</small>
+              </div>
+              <a href="{% url 'load_research_session' session.id %}" class="btn btn-sm btn-outline-primary">Load</a>
+            </div>
+          </li>
+          {% empty %}
+          <li class="list-group-item">No research session history available.</li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock content %}

@@ -72,3 +72,10 @@ def delete_account(request):
             else:
                 messages.error(request, 'Password is incorrect.')
     return redirect('profile/profile_modal.html')
+
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from allauth.socialaccount.providers.oauth2.client import OAuth2Error
+from dj_rest_auth.registration.views import SocialLoginView
+
+class GoogleLoginByToken(SocialLoginView):
+    adapter_class = GoogleOAuth2Adapter

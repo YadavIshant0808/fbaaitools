@@ -34,23 +34,29 @@
 
   <header id="header" class="header d-flex align-items-center fixed-top">
     <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
-
-      <a href="{% url "home" %}" class="logo d-flex align-items-center me-auto me-xl-0">
+  
+      <a href="{% url 'home' %}" class="logo d-flex align-items-center me-auto me-xl-0">
         <!-- Uncomment the line below if you also wish to use an image logo -->
-        <!-- <img src="{ static "assets/img/logo.png" %}" alt=""> -->
+        <!-- <img src="{ static 'assets/img/logo.png' %}" alt=""> -->
         <h1 class="sitename">FBA Dev Tools</h1>
       </a>
-
+  
       <nav id="navmenu" class="navmenu">
         <ul>
-          <li><a href="{% url "home" %}#hero" class="active">Home</a></li>
-          <li><a href="{% url "home" %}#about">About</a></li>
-          <li><a href="{% url "home" %}#features">Features</a></li>
-          <li><a href="{% url "home" %}#services">Services</a></li>
-          <li><a href="{% url "home" %}#pricing">Pricing</a></li>
-          <li class="dropdown"><a href="#"><span>Other</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+          <li><a href="{% url 'home' %}#hero" class="active">Home</a></li>
+          <li><a href="{% url 'home' %}#about">About</a></li>
+          <li><a href="{% url 'home' %}#features">Features</a></li>
+          <li><a href="{% url 'home' %}#services">Services</a></li>
+          <li><a href="{% url 'home' %}#pricing">Pricing</a></li>
+          <li class="dropdown">
+            <a href="#">
+              <span>Other</span> <i class="bi bi-chevron-down toggle-dropdown"></i>
+            </a>
             <ul>
-              <li class="dropdown"><a href="{% url "tools" %}"><span>Tools</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+              <li class="dropdown">
+                <a href="{% url 'tools' %}">
+                  <span>Tools</span> <i class="bi bi-chevron-down toggle-dropdown"></i>
+                </a>
                 <ul>
                   <li><a href="#">Researcher AI</a></li>
                   <li><a href="#">Math Tutor AI</a></li>
@@ -58,33 +64,37 @@
                   <li><a href="#">Code Optimiser AI</a></li>
                 </ul>
               </li>
-              <li><a href="{% url "privacy" %}#">Privacy & Policy</a></li>
-              <li><a href="{% url "terms" %}#">Terms & Condition</a></li>
-              <li><a href="{% url "cookies" %}#">Cookies</a></li>
+              <li><a href="{% url 'privacy' %}#">Privacy & Policy</a></li>
+              <li><a href="{% url 'terms' %}#">Terms & Condition</a></li>
+              <li><a href="{% url 'cookies' %}#">Cookies</a></li>
             </ul>
           </li>
           <li><a href="#contact">Contact</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
-              <!-- Other nav items -->
-        {% if user.is_authenticated %}
-        <div class="profile-dropdown">
-          <img src="{% if user.profile.profile_picture %}{{ user.profile.profile_picture.url }}{% else %}{% static 'assets/img/default-profile.png' %}{% endif %}" alt="Profile" width="30%" height="30%" class=" rounded profile-icon">
-          <div class="dropdown-content">
-            <span class="user-fullname">{{ user.get_full_name|default:user.username }}</span>
-            <span class="user-username">@{{ user.username }}</span>
-            <a href="#" id="openProfileModal">Profile</a>
-            <a href="{% url 'account_logout' %}">Logout</a>
-          </div>
+      
+      <!-- Other nav items -->
+      {% if user.is_authenticated %}
+      <div class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" 
+           data-bs-toggle="dropdown" aria-expanded="false">
+          <img src="{% if user.profile.profile_picture %}{{ user.profile.profile_picture.url }}{% else %}{% static 'assets/img/default-profile.png' %}{% endif %}" 
+               alt="Profile" width="40" height="40" class="rounded-circle img-fluid">
+        </a>
+        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+          <h6 class="dropdown-header">{{ user.get_full_name|default:user.username }}</h6>
+          <a class="dropdown-item" href="#" id="openProfileModal">Profile</a>
+          <a class="dropdown-item" href="{% url 'account_logout' %}">Logout</a>
         </div>
+      </div>
       {% else %}
-      <a class="btn-getstarted" href="{% url 'account_login' %}">Login</a>
+        <a class="btn btn-primary" href="{% url 'account_login' %}">Login</a>
       {% endif %}
-
+      
     </div>
   </header>
-
+  
   {% block content %}
 
   {% endblock content%}
@@ -136,7 +146,14 @@
       // Optionally, add tab switching logic here for the sidebar inside the modal
     });
   </script>
-
+  <!--One Click google_login_by_token code starthere-->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+<div id="g_id_onload"
+     data-client_id="524299101054-n5uus6vtc99n45ii524kb9u3j2dpf122.apps.googleusercontent.com"
+     data-login_uri="{% url 'google_login_by_token' %}"
+     data-auto_prompt="true">
+</div>
+  <!--One Click google_login_by_token code starthere-->
 </body>
 
 </html>

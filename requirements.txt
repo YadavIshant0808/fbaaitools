@@ -5,3 +5,4 @@ google-generativeai
 django-allauth
 pillow
 "django-allauth[socialaccount]"
+dj-rest-auth

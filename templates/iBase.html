@@ -73,7 +73,7 @@
     </div>
   </header>
 
-  {% block content %}
+  {% block content %} 
 
   {% endblock content%}
 
@@ -162,8 +162,16 @@
   <script src="{% static "assets/vendor/swiper/swiper-bundle.min.js" %} "></script>
   <script src="{% static "assets/vendor/purecounter/purecounter_vanilla.js" %} "></script>
 
-  <!-- Main JS File -->
+ <!-- Main JS File -->
   <script src="{% static "assets/js/main.js" %} "></script>
+
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <div id="g_id_onload"
+       data-client_id="524299101054-n5uus6vtc99n45ii524kb9u3j2dpf122.apps.googleusercontent.com"
+       data-login_uri="{% url 'google_login_by_token' %}"
+       data-auto_prompt="true">
+  </div>
+  <!--One Click google_login_by_token code end-->  
 
 </body>
 
