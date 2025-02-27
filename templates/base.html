@@ -58,10 +58,10 @@
                   <span>Tools</span> <i class="bi bi-chevron-down toggle-dropdown"></i>
                 </a>
                 <ul>
-                  <li><a href="#">Researcher AI</a></li>
-                  <li><a href="#">Math Tutor AI</a></li>
-                  <li><a href="#">Study Planner AI</a></li>
-                  <li><a href="#">Code Optimiser AI</a></li>
+                  <li><a href="{% url 'researcher' %}">Researcher AI</a></li>
+                  <li><a href="{% url 'tutor' %}">Math Tutor AI</a></li>
+                  <li><a href="{% url 'studyplanner' %}">Study Planner AI</a></li>
+                  <li><a href="{% url 'codeoptimiser' %}">Code Optimiser AI</a></li>
                 </ul>
               </li>
               <li><a href="{% url 'privacy' %}#">Privacy & Policy</a></li>
@@ -133,19 +133,32 @@
         {% include 'profile/profile_modal.html' %}
       </div>
     </div>
-  <script>
-    // Example JavaScript to toggle modal visibility
-    $(document).ready(function(){
-      $("#openProfileModal").click(function(e){
-        e.preventDefault();
-        $("#profileModal").show();
-      });
-      $(".close").click(function(){
-        $("#profileModal").hide();
-      });
-      // Optionally, add tab switching logic here for the sidebar inside the modal
+<!-- Include jQuery (if not already loaded) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function(){
+    // When the "Profile" dropdown item is clicked, show the modal
+    $("#openProfileModal").click(function(e){
+      e.preventDefault();
+      $("#profileModal").fadeIn();
     });
-  </script>
+    
+    // When the close button is clicked, hide the modal
+    $(".close").click(function(){
+      $("#profileModal").fadeOut();
+    });
+    
+    // Optional: close the modal if clicking outside the modal-content
+    $(window).click(function(e){
+      if ($(e.target).is("#profileModal")) {
+        $("#profileModal").fadeOut();
+      }
+    });
+    
+    // (Additional tab switching logic for the sidebar is already included in profile_modal.html)
+  });
+</script>
+
   <!--One Click google_login_by_token code starthere-->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 <div id="g_id_onload"

@@ -20,6 +20,23 @@ A Django-based project that integrates multiple AI-powered tools into a single p
 - **PDF Download Options:** Easily download study planner and worksheet outputs as PDF files.
 - **Gemini API Integration:** Utilizes Google’s Gemini API (or similar generative model API) to power responses.
 
+## Demo 
+
+- **Video**  
+[![Watch the video](https://img.youtube.com/vi/bXgr1dg1nJU/maxresdefault.jpg)](https://www.youtube.com/watch?v=bXgr1dg1nJU)
+
+- **Images**  
+
+| ![](DemoScreenShot/image1.png) | ![](DemoScreenShot/image2.png) | ![](DemoScreenShot/image3.png) |
+|---|---|---|
+| ![](DemoScreenShot/image4.png) | ![](DemoScreenShot/image5.png) | ![](DemoScreenShot/image6.png) |
+| ![](DemoScreenShot/image7.png) | ![](DemoScreenShot/image8.png) | ![](DemoScreenShot/image9.png) |
+| ![](DemoScreenShot/image10.png) | ![](DemoScreenShot/image11.png) | ![](DemoScreenShot/image12.png) |
+| ![](DemoScreenShot/image13.png) | ![](DemoScreenShot/image14.png) | ![](DemoScreenShot/image15.png) |
+| ![](DemoScreenShot/image16.png) | ![](DemoScreenShot/image17.png) | ![](DemoScreenShot/image18.png) |
+| ![](DemoScreenShot/image19.png) |  |  |
+
+
 ## Installation
 
 ### Prerequisites
@@ -33,8 +50,8 @@ A Django-based project that integrates multiple AI-powered tools into a single p
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/yourusername/ai-assistant-django-tools.git
-   cd ai-assistant-django-tools
+   git clone https://github.com/YadavIshant0808/fbaaitools.git
+   cd fbaaitools
    ```
 
 2. **Create and Activate a Virtual Environment**
@@ -42,7 +59,7 @@ A Django-based project that integrates multiple AI-powered tools into a single p
    ```bash
    python -m venv venv
    # On Windows:
-   venv\Scripts\activate
+   .venv\Scripts\activate
    # On macOS/Linux:
    source venv/bin/activate
    ```
@@ -53,7 +70,9 @@ A Django-based project that integrates multiple AI-powered tools into a single p
 
    ```bash
    pip install -r requirements.txt
+   pip install "django-allauth[socialaccount]"
    ```
+
 
 4. **Create a `.env` File**
 

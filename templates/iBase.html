@@ -52,10 +52,10 @@
             <ul>
               <li class="dropdown"><a href="{% url "tools" %}"><span>Tools</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                 <ul>
-                  <li><a href="#">Researcher AI</a></li>
-                  <li><a href="#">Math Tutor AI</a></li>
-                  <li><a href="#">Study Planner AI</a></li>
-                  <li><a href="#">Code Optimiser AI</a></li>
+                  <li><a href="{% url 'researcher' %}">Researcher AI</a></li>
+                  <li><a href="{% url 'tutor' %}">Math Tutor AI</a></li>
+                  <li><a href="{% url 'studyplanner' %}">Study Planner AI</a></li>
+                  <li><a href="{% url 'codeoptimiser' %}">Code Optimiser AI</a></li>
                 </ul>
               </li>
               <li><a href="{% url "privacy" %}#">Privacy & Policy</a></li>
