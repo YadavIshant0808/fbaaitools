@@ -307,7 +307,7 @@ def research_view(request):
             conversation_messages = current_session.messages.all().order_by('timestamp')
         except ResearchSession.DoesNotExist:
             current_session = None
-
+  
     if request.method == 'POST':
         # Read the research query input
         query_text = request.POST.get('query', '')

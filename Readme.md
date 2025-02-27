@@ -1,152 +1,150 @@
-Below is the complete Markdown content in an easily copiable format:
+Below is an example of a comprehensive README.md file that explains installation, testing, features, and production setup:
 
-```markdown
-# FBA Dev Tools Integration Guide
+---
 
-This guide is intended for our backend developers (Dev1  and Dev2) to help integrate AI tool functions into our Django project. We are not using APIs for these tools—instead, we will import the functions directly from our AI tool files, pass the required inputs, and then forward the output to the frontend for proper rendering.
+# AI Assistant Django Tools
 
-## Project Structure Overview
+A Django-based project that integrates multiple AI-powered tools into a single platform. The project includes the following features:
 
-- **optimise.py**
-  - `optimize_code(code_snippet: str) -> str`  
-    *Analyzes and optimizes a given Python function.*
-  - `generate_unit_tests(code_snippet: str) -> str`  
-    *Generates unit tests for the provided code snippet.*
+- **Code Optimiser:** Analyze and optimize Python code with detailed explanations and unit test generation.
+- **Study Planner:** Generate detailed study schedules based on exam dates and subjects, with outputs in an organized table and downloadable PDF.
+- **Math Tutor:** Solve math problems and generate worksheets with interactive chat-style conversation.
+- **Researcher:** Analyze research papers by accepting text or file attachments (PDF/DOC) and returning concise, fact-based responses.
 
-- **research.py**
-  - `fba_researcher(inp_message: str) -> str`  
-    *Processes a research paper message and returns answers to specific research questions.*
+## Features
 
-- **studyplan.py**
-  - `generate_study_plan(subjects_dates: dict, extra_details: str = "") -> str`  
-    *Generates a detailed study plan schedule based on provided subjects and exam dates.*
+- **Multiple Tools in One Platform:** Use Code Optimiser, Study Planner, Math Tutor, and Researcher—all within the same Django application.
+- **Session Management:** Each tool stores conversation history in user-specific sessions with options to create, load, and download session outputs.
+- **Responsive, Chat-Style Interface:** Built with Bootstrap, providing a modern and responsive design.
+- **File Attachment Support:** For the Researcher tool, users can attach PDF or DOC files to ask questions based on research papers.
+- **PDF Download Options:** Easily download study planner and worksheet outputs as PDF files.
+- **Gemini API Integration:** Utilizes Google’s Gemini API (or similar generative model API) to power responses.
 
-- **tutor.py**
-  - `solve_math_problem(problem: str) -> str`  
-    *Provides a detailed, step-by-step solution for a given math problem.*
-  - `generate_worksheet(topic: str, num_questions: int = 5) -> str`  
-    *Generates a worksheet with math problems and detailed solutions.*
+## Installation
 
-## How to Integrate
+### Prerequisites
 
-### 1. Importing the Functions
+- Python 3.11 or higher
+- Git
+- Virtualenv (or any virtual environment manager)
 
-In your Django view file (e.g., `views.py`), import the functions as needed:
+### Steps
 
-```python
-from .optimise import optimize_code, generate_unit_tests
-from .research import fba_researcher
-from .studyplan import generate_study_plan
-from .tutor import solve_math_problem, generate_worksheet
-```
+1. **Clone the Repository**
 
-### 2. Creating View Functions
+   ```bash
+   git clone https://github.com/yourusername/ai-assistant-django-tools.git
+   cd ai-assistant-django-tools
+   ```
 
-Below are sample view functions to demonstrate how to wrap these AI tool functions. Each view reads inputs from a POST request, calls the corresponding function, and then passes the output to a template.
+2. **Create and Activate a Virtual Environment**
 
-#### **Code Optimiser Example**
+   ```bash
+   python -m venv venv
+   # On Windows:
+   venv\Scripts\activate
+   # On macOS/Linux:
+   source venv/bin/activate
+   ```
 
-This view calls `optimize_code` with a provided code snippet:
+3. **Install Dependencies**
 
-```python
-def code_optimiser_view(request):
-    if request.method == 'POST':
-        code_snippet = request.POST.get('code_snippet', '')
-        if code_snippet:
-            result = optimize_code(code_snippet)
-            return render(request, 'tool_output.html', {'result': result})
-        else:
-            return render(request, 'tool_output.html', {'error': 'Code snippet is missing.'})
-    return render(request, 'code_optimiser.html')
-```
+   Make sure you have a `requirements.txt` file in the repository. Then run:
 
-#### **Study Planner Example**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-This view calls `generate_study_plan`. It expects a JSON string for the subjects and dates and an optional extra details field:
+4. **Create a `.env` File**
 
-```python
-import json
+   In the root directory of the project, create a file named `.env` and add your environment variables. For example:
 
-def study_planner_view(request):
-    if request.method == 'POST':
-        subjects_dates_json = request.POST.get('subjects_dates', '')
-        extra_details = request.POST.get('extra_details', '')
-        try:
-            subjects_dates = json.loads(subjects_dates_json)
-        except json.JSONDecodeError:
-            return render(request, 'tool_output.html', {'error': 'Invalid JSON for subjects and dates.'})
-        result = generate_study_plan(subjects_dates, extra_details)
-        return render(request, 'tool_output.html', {'result': result})
-    return render(request, 'study_planner.html')
-```
+   ```env
+   DEBUG=True
+   SECRET_KEY=your_secret_key_here
+   ALLOWED_HOSTS=localhost,127.0.0.1
+   GEMINI_API_KEY=your_gemini_api_key_here
+   DATABASE_URL=sqlite:///db.sqlite3
+   ```
 
-#### **Researcher Example**
+5. **Database Setup**
 
-This view calls `fba_researcher` with an input message:
+   If you prefer not to create the database from scratch, you can download a pre-built database from [this Google Drive link](https://drive.google.com/drive/folders/1zWyf49yBiguVZtE3WrJ6xcujtMpbZ7pD?usp=sharing). Place the downloaded database file in the appropriate location (e.g., replace `db.sqlite3` in your project root).
 
-```python
-def researcher_view(request):
-    if request.method == 'POST':
-        inp_message = request.POST.get('inp_message', '')
-        if inp_message:
-            result = fba_researcher(inp_message)
-            return render(request, 'tool_output.html', {'result': result})
-        else:
-            return render(request, 'tool_output.html', {'error': 'Input message is required.'})
-    return render(request, 'researcher.html')
-```
+   Otherwise, run:
 
-#### **Tutor Example**
+   ```bash
+   python manage.py makemigrations
+   python manage.py migrate
+   ```
 
-This view handles two tutor actions: solving a math problem and generating a worksheet.
+6. **Collect Static Files**
 
-```python
-def tutor_view(request):
-    if request.method == 'POST':
-        action = request.POST.get('action', '')
-        if action == 'solve':
-            problem = request.POST.get('problem', '')
-            if problem:
-                result = solve_math_problem(problem)
-                return render(request, 'tool_output.html', {'result': result})
-            else:
-                return render(request, 'tool_output.html', {'error': 'Math problem is missing.'})
-        elif action == 'worksheet':
-            topic = request.POST.get('topic', '')
-            try:
-                num_questions = int(request.POST.get('num_questions', '5'))
-            except ValueError:
-                num_questions = 5
-            if topic:
-                result = generate_worksheet(topic, num_questions)
-                return render(request, 'tool_output.html', {'result': result})
-            else:
-                return render(request, 'tool_output.html', {'error': 'Topic is missing.'})
-    return render(request, 'tutor.html')
-```
+   (For production or if needed in testing)
 
-### 3. Frontend Integration
+   ```bash
+   python manage.py collectstatic
+   ```
 
-- **Templates:**  
-  Create individual input templates (e.g., `code_optimiser.html`, `study_planner.html`, `researcher.html`, and `tutor.html`) where users can enter the necessary data.  
-  Use a common template (e.g., `tool_output.html`) to display the output or error messages.
+7. **Run the Development Server**
 
-- **Data Flow:**  
-  The frontend sends a POST request with the required data (for example, form data). The view calls the corresponding function from the AI tool file, obtains a result (a string), and then passes that result to the template for rendering.
+   ```bash
+   python manage.py runserver
+   ```
 
-### 4. Error Handling
+   Now visit [http://localhost:8000](http://localhost:8000) to test the application.
 
-- Ensure to check that all required inputs are provided.  
-- Validate JSON data (for study planner inputs) and handle conversion errors.  
-- Return clear error messages if any input is missing or invalid.
+## Testing
 
-## Additional Notes
+- Ensure your virtual environment is active.
+- Run the development server with `python manage.py runserver`.
+- Interact with each tool:
+  - For **Code Optimiser**, paste your code snippet and click the send icon.
+  - For **Study Planner**, enter subjects and exam dates, then generate a timetable.
+  - For **Math Tutor**, switch between the "Solve" and "Worksheet" tabs.
+  - For **Researcher**, attach a research paper (PDF/DOC) or paste text and submit your query.
+- Watch the loading indicators when you click send as the system processes your request.
 
-- Use Django’s built-in messaging framework if you want to display flash messages for success or error notifications.
-- Comment your code to explain each step so that the integration is clear for future maintenance.
-- Test each view thoroughly to ensure the correct functioning of the tool functions before integrating with the frontend.
+## Production Setup
 
-This documentation should help you quickly integrate the functions from our AI tools and deliver the expected output to the frontend. If you encounter any issues or have questions, please reach out for clarification.
-```
+1. **Environment Variables:**  
+   Set `DEBUG=False` and update `ALLOWED_HOSTS` with your production domain names. Secure your `SECRET_KEY` and any API keys in your environment.
 
-Feel free to copy and share this with Dev1 and Dev2 for integrating the AI tool functions into the Django project.
+2. **Static Files:**  
+   Run `python manage.py collectstatic` to gather all static files. Configure your web server (e.g., Nginx) to serve these files.
+
+3. **Database:**  
+   For production, consider using a more robust database like PostgreSQL. Update your `DATABASE_URL` in the `.env` file accordingly.
+
+4. **WSGI Server:**  
+   Use a production-grade WSGI server like Gunicorn. For example:
+
+   ```bash
+   gunicorn yourprojectname.wsgi:application --bind 0.0.0.0:8000
+   ```
+
+5. **HTTPS:**  
+   Configure your server to use HTTPS (via a reverse proxy like Nginx and Let’s Encrypt).
+
+6. **Logging & Monitoring:**  
+   Set up logging and monitoring to track errors and performance in production.
+
+7. **Security:**  
+   Ensure you follow Django’s deployment checklist:
+   - Use strong passwords and update dependencies regularly.
+   - Consider using Django Security Middleware and Content Security Policy (CSP).
+
+## Additional Information
+
+- **API Integration:**  
+  The project uses Google’s Gemini API for generative responses. Ensure your API key is valid and you comply with the API usage guidelines.
+
+- **Contributions:**  
+  Contributions and improvements are welcome. Please fork the repository and create a pull request with your changes.
+
+- **License:**  
+  This project is licensed under the MIT License.
+
+---
+
+This README should help new users install, test, and deploy the project. Adjust URLs, project names, and other specifics as needed for your environment.
