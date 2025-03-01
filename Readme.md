@@ -21,7 +21,8 @@ A Django-based project that integrates multiple AI-powered tools into a single p
 - **Gemini API Integration:** Utilizes Google’s Gemini API (or similar generative model API) to power responses.
 
 ## Demo 
-
+**Site** 
+https://8000-yadavishant0808-fbaaitoo-uae3cfjhpr.app.codeanywhere.com/
 - **Video**  
 [![Watch the video](https://img.youtube.com/vi/bXgr1dg1nJU/maxresdefault.jpg)](https://www.youtube.com/watch?v=bXgr1dg1nJU)
 
