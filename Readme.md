@@ -168,3 +168,5 @@ https://8000-yadavishant0808-fbaaitoo-uae3cfjhpr.app.codeanywhere.com/
 ---
 
 This README should help new users install, test, and deploy the project. Adjust URLs, project names, and other specifics as needed for your environment.
+____
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/YadavIshant0808/fbaaitools?utm_source=oss&utm_medium=github&utm_campaign=YadavIshant0808%2Ffbaaitools&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
