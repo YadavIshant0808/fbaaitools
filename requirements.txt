@@ -5,3 +5,6 @@ google-generativeai
 django-allauth
 pillow
 dj-rest-auth
+psycopg2-binary
+psycopg
+jwt
